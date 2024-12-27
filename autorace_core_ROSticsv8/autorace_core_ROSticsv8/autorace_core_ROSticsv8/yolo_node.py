@@ -126,10 +126,10 @@ class YOLONode(Node):
                 cv2.putText(cv_image, f"{label} {confidence:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
                 self.get_logger().info(f"{label}, {confidence}")
 
-                # if label == "works_sign" and confidence > 0.99:
-                #     msg = String()
-                #     msg.data = 'work'
-                #     self.label_publisher.publish(msg)
+                if label == "works_sign" and confidence > 0.985:
+                    msg = String()
+                    msg.data = 'work'
+                    self.label_publisher.publish(msg)
 
                 # if label == "works_sign" and self.current_task > 1:
                 #     self.lidar_3_task = True  
