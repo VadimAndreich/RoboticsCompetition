@@ -36,7 +36,7 @@ class YOLONode(Node):
         self.use_yolo = False
         self.last_labels = deque(maxlen = 7)
         self.flag = True
-        self.work_flag = False
+        self.work_flag = True
         self.slowed_flag = True
 
     def usage_callback(self, msg):
