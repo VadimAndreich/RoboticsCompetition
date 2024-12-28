@@ -22,10 +22,12 @@ class TrafficLightNode(Node):
         self.subscription = self.create_subscription(Image, '/color/image', self.image_callback, 10)
         self.bridge = CvBridge()
 
+    
     def image_callback(self, msg):
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
         self.process_image(cv_image)
 
+    
     def process_image(self, image):
         # Преобразуем изображение в формат HSV для работы с цветом
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

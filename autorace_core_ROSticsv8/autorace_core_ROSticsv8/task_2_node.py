@@ -26,6 +26,7 @@ class CrossroadNode(Node):
         self.task_publisher = self.create_publisher(Int32, '/comp/task', 10)     # Этап соревнования
         self.mode_publisher = self.create_publisher(String, '/comp/drive', 10)   # Режим отслеживания полос
     
+    
     def label_callback(self, msg):
         task = Int32()
         mode = String()
@@ -70,7 +71,6 @@ class CrossroadNode(Node):
             
             rclpy.logging.get_logger("Task 2 Node").info('Task completed. Quit working...')
             raise SystemExit
-
 
 
 def main(args=None):

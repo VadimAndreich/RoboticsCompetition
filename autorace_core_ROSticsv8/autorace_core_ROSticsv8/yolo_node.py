@@ -38,26 +38,31 @@ class YOLONode(Node):
         self.use_yolo = False
         self.last_labels = deque(maxlen = 7)
 
-        self.flag = True
-        self.work_flag = True
-        self.slowed_flag = True
-        self.works = 0
-        self.time = 0
-        self.seconds = 0
+        self.flag = True    # Ищем ли знак поворота
+        # self.work_flag = True       
+        # self.slowed_flag = True
+        self.works = 0      # Количество циклов использования yolo
+        self.time = 0       # Время, после которого не используется yolo
+        self.seconds = 0    # Время, в течение которого не используется yolo
+
 
     def usage_callback(self, msg):
         self.get_logger().info('YOLO is in use' if msg.data else 'YOLO is NOT in use')
         self.use_yolo = msg.data
         
+        # Задержка запуска yolo после прохождения этапа 1
         if self.works == 0:
             self.seconds = 12
             self.time = time.time()
         
         self.works += 1
 
+    
     def image_callback(self, msg):
+        # Получаем изображение
         cv_image = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-
+        
+        # Если остановка установлена
         if self.seconds != 0:
             if time.time() - self.time > self.seconds:
                 self.seconds = 0
@@ -71,9 +76,6 @@ class YOLONode(Node):
             cv2.imshow("Camera", cv_image)
             cv2.waitKey(1)
 
-    def disable_yolo(self, seconds):
-        if time.time() - self.time > seconds:
-            self.use_yolo = True
 
     def process_image(self, cv_image):
         cv_image, labels = self.detect_objects_with_yolo(cv_image)
@@ -106,10 +108,10 @@ class YOLONode(Node):
             self.flag = True
             self.label_publisher.publish(msg)
 
-            self.seconds = 30
+            self.seconds = 28
             self.time = time.time()
 
-        elif self.work_flag and sum([1 if i == "works_sign" else 0 for i in labels_list]) >= 3:
+        elif sum([1 if i == "works_sign" else 0 for i in labels_list]) >= 3:
             # Знак дорожных работ
             msg.data = 'work'
             self.label_publisher.publish(msg)

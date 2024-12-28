@@ -30,38 +30,50 @@ class RobotControlNode(Node):
         self.yolo_publisher = self.create_publisher(Bool, '/yolo/use_yolo', 10)        # Управление YOLO
         self.lidar_publisher = self.create_publisher(Bool, '/lidar/use_lidar', 10)     # Управление лидаром
 
-        self.current_task = 1
-        self.use_yolo = False
+        self.use_yolo = False   # Использование yolo
         
+
     def task_1_callback(self, msg):
-        self.current_task = 2
+        # Запускаем yolo для этапа 2
         self.toggle_yolo()
+        
+        # Устанавливаем режим отслеживания обеих полос
         message = String()
         message.data = 'both'
         self.mode_publisher.publish(message)
+        
         self.get_logger().info('Start.')
 
+
     def task_2_callback(self, msg):
-        self.current_task = 3
+        # Отключаем yolo после этапа 2
         self.toggle_yolo()
+
+        # Включаем использование лидара для этапа 3
         message = Bool()
         message.data = True
         self.lidar_publisher.publish(message)
 
+    
     def task_3_callback(self, msg):
-        self.current_task = 4
+        # Включаем yolo для этапа 4
         self.toggle_yolo()
 
+    
     def finish_callback(self, msg):
+        # Выключаем drive_node на финише
         message = String()
         message.data = "finish"
         self.mode_publisher.publish(message)
 
+    
     def toggle_yolo(self):
+        # Переключаем испольщование yolo
         self.use_yolo = not self.use_yolo
         msg = Bool()
         msg.data = self.use_yolo
         self.yolo_publisher.publish(msg)
+
 
 def main(args=None):
     rclpy.init(args=args)
